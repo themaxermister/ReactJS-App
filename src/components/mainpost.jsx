@@ -1,20 +1,32 @@
 
 import React, { Component } from "react";
-import NavBar from "./components/navbar";
-import commentPost from "./components/commentPost";
-import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
+import NavBar from "./navbar";
+import CommentPost from "./commentpost";
+import {BrowserRouter, Route, Link } from 'react-router-dom';
 
  export default class MainPost extends Component {
    constructor(props) {
       super(props) //since we are extending class Table so we have to use super in order to override Component class constructor
-
       this.state = { //state is by default an object 
-         redirect: false,
          headers: ["id", "title","description"],
          postId: 0,
          posts:[]
       }
       
+   }
+
+   handleClick = (id) => {
+      console.log("Clicked");
+      this.setState({ postId: id });
+      this.setState({redirect:true});
+      this.props.history.push('/comments/' + id);
+
+      return(
+         <Link to={{
+               pathname: '/comments/'+this.state.postId,
+               state: { postId: true }
+            }} />
+      )
    }
 
    getTableData () {
@@ -45,15 +57,6 @@ import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
       )
    }
 
-   
-   handleClick = (id) => {
-      this.setState({ postId: id });
-      return (
-         <Link to={'/comments/'+ id} render={<CommentPost />}/>
-      )
-      
-   }
-    
    renderTableHeader() {
       let header = this.state.headers;
       return header.map((key, index) => {
@@ -68,7 +71,7 @@ import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
    render() {
       return (
             <div>
-               <NavBar pageName={this.state.pageName}/>
+               <NavBar pageName="Posts"/>
                <table className='posts'>
                   <tbody>
                   <tr>{this.renderTableHeader()}</tr>
